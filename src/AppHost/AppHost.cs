@@ -17,7 +17,7 @@ var cache = builder
 
 var sqlServer = builder
         .AddSqlServer("sqlserver")
-        .WithDataVolume()
+        .WithDataVolume()  // if get exited error, comment this line
         .WithLifetime(ContainerLifetime.Persistent);
 
 var orderdb = sqlServer.AddDatabase("orderdb");
@@ -43,5 +43,16 @@ basket
     .WithReference(ordering)
     .WaitFor(ordering);
 
+var webapp = builder
+        .AddProject<Projects.WebApp>("webapp")
+        .WithExternalHttpEndpoints()
+        .WithUrlForEndpoint("https", url => url.DisplayText = "EShop WebApp (HTTPS)")
+        .WithUrlForEndpoint("http", url => url.DisplayText = "EShop WebApp (HTTP)")
+        .WithReference(catalog)
+        .WithReference(basket)
+        .WithReference(ordering)
+        .WaitFor(catalog)
+        .WaitFor(basket)
+        .WaitFor(ordering);
 
 builder.Build().Run();
