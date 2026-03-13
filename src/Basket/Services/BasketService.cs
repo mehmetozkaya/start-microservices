@@ -49,7 +49,7 @@ public class BasketService(IDistributedCache cache, OrderingApiClient orderingAp
             EmailAddress = basketCheckout.EmailAddress,
             AddressLine = basketCheckout.AddressLine
         };
-        //await orderingApiClient.CreateOrder(order);
+        await orderingApiClient.CreateOrder(order);
 
         // delete the basket
         await DeleteBasket(basketCheckout.UserName);

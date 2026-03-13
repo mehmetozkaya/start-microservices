@@ -1,6 +1,5 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-
 // Backing Services
 var postgres = builder
         .AddPostgres("postgres")
@@ -16,6 +15,12 @@ var cache = builder
         .WithDataVolume()
         .WithLifetime(ContainerLifetime.Persistent);
 
+var sqlServer = builder
+        .AddSqlServer("sqlserver")
+        .WithDataVolume()
+        .WithLifetime(ContainerLifetime.Persistent);
+
+var orderdb = sqlServer.AddDatabase("orderdb");
 
 // Projects
 var catalog = builder
@@ -28,9 +33,15 @@ var basket = builder
         .WithReference(cache)
         .WaitFor(cache);
 
+var ordering = builder
+        .AddProject<Projects.Ordering>("ordering")
+        .WithReference(orderdb)
+        .WaitFor(orderdb);
 
-
-
+// for simplicity basket checkout performed sync call basket to ordering
+basket
+    .WithReference(ordering)
+    .WaitFor(ordering);
 
 
 builder.Build().Run();

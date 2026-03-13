@@ -7,5 +7,6 @@
   <Folder Name="/services/">
     <Project Path="Basket/Basket.csproj" />
     <Project Path="Catalog/Catalog.csproj" />
+    <Project Path="Ordering/Ordering.csproj" />
   </Folder>
 </Solution>
